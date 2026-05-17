@@ -1,17 +1,18 @@
 package com.taskapp.taskmanager.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Task {
 
     @Id
@@ -19,5 +20,17 @@ public class Task {
     private Long id;
     private String description;
     private String title;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
+
+
+    @Enumerated(EnumType.STRING)
+    private TaskPriority priority;
+
+    private LocalDate dueDate;
+
+    @ManyToOne
+    private Project project;
+    @ManyToOne
+    private User assignedTo;
 }
