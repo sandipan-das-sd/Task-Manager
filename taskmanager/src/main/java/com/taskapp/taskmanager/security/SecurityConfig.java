@@ -45,7 +45,13 @@ public class SecurityConfig {
 
                         // public routes
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/health").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/health",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         // only ADMIN or MEMBER can access
                         .requestMatchers("/api/projects/**")
                         .hasAnyRole("ADMIN", "MEMBER")
