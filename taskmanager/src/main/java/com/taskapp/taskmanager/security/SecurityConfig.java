@@ -45,7 +45,7 @@ public class SecurityConfig {
 
                         // public routes
                         .requestMatchers("/api/auth/**").permitAll()
-
+                        .requestMatchers("/health").permitAll()
                         // only ADMIN or MEMBER can access
                         .requestMatchers("/api/projects/**")
                         .hasAnyRole("ADMIN", "MEMBER")
