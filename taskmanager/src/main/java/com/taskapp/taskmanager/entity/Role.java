@@ -1,4 +1,6 @@
 package com.taskapp.taskmanager.entity;
 
-public class Role {
+public enum Role {
+    ADMIN,
+    MEMBER
 }
