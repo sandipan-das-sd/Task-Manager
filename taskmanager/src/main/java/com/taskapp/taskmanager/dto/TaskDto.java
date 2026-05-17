@@ -1,5 +1,6 @@
 package com.taskapp.taskmanager.dto;
 
+import com.taskapp.taskmanager.entity.TaskPriority;
 import com.taskapp.taskmanager.entity.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class TaskDto {
     @NotBlank(message="Description is required")
     private String description;
     private TaskStatus status;
+    private TaskPriority priority;
     private LocalDate dueDate;
     private  Long projectId;
     private  Long assignedToId;
