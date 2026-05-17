@@ -19,6 +19,7 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
+
     @ManyToOne //one project can have many users
     private  User createdBy;
     @ManyToMany  //many users can have many projects also one users many project bi directional
