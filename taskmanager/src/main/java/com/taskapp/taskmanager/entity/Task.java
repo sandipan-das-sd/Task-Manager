@@ -30,7 +30,11 @@ public class Task {
     private LocalDate dueDate;
 
     @ManyToOne
+
+// Many tasks belong to one project
     private Project project;
     @ManyToOne
+
+    //Many task One user
     private User assignedTo;
 }
