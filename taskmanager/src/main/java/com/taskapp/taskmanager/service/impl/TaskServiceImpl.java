@@ -44,6 +44,8 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskDto createTask(TaskDto taskDto) {
 
+        //check any project is assigned on task
+
         Project project = projectRepository.findById(taskDto.getProjectId())
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 

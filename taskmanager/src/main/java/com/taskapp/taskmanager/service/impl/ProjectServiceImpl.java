@@ -35,26 +35,27 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDto createProject(ProjectDto projectDto) {
 
-        Project project = new Project();
-        project.setName(projectDto.getName());
-        project.setDescription(projectDto.getDescription());
-        //if no creator
-        if (projectDto.getCreatedById() != null) {
+        User creator = null;
+        Set<User> members = new HashSet<>();
 
-            //create creator
-            User creator = userRepository.findById(projectDto.getCreatedById())
+        if (projectDto.getCreatedById() != null) {
+            creator = userRepository.findById(projectDto.getCreatedById())
                     .orElseThrow(() -> new RuntimeException("Creator not found"));
-            project.setCreatedBy(creator);
         }
 
         if (projectDto.getMemberIds() != null) {
-            Set<User> members = new HashSet<>(userRepository.findAllById(projectDto.getMemberIds()));
-            project.setMembers(members);
+            members = new HashSet<>(userRepository.findAllById(projectDto.getMemberIds()));
         }
+
+        Project project = Project.builder()
+                .name(projectDto.getName())
+                .description(projectDto.getDescription())
+                .createdBy(creator)
+                .members(members)
+                .build();
 
         return toDto(projectRepository.save(project));
     }
-
 
     @Override
     public ProjectDto updateProject(Long id, ProjectDto projectDto) {
