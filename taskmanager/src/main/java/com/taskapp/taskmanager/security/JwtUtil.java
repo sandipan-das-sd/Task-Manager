@@ -39,9 +39,12 @@ public class JwtUtil {
 
 
     public String extractEmail(String token) {
+
         return getClaims(token).getSubject();
     }
-
+    public String extractRole(String token) {
+        return getClaims(token).get("role", String.class);
+    }
     //check token valid or not
 
 
