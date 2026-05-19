@@ -1,18 +1,57 @@
-# React + Vite
+# Task Manager Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite frontend for the Java Task Manager API.
 
-Currently, two official plugins are available:
+## Local Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+Create `.env` from `.env.example` and point it at your backend:
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+```bash
+VITE_API_BASE_URL=http://localhost:8080
+```
 
-Note: This will impact Vite dev & build performances.
+For Vercel, add the same `VITE_API_BASE_URL` environment variable with your Render backend URL.
 
-## Expanding the ESLint configuration
+## Implemented Screens
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Login and registration with JWT session storage
+- Dashboard stats for projects, tasks, progress, high priority, and overdue work
+- Project create, update, delete, and member ID assignment
+- Task create, update, delete, status movement, priority, due date, assignee ID
+- Kanban board with native drag-and-drop status updates
+- Task filters for project, status, priority, and assignee ID
+
+## Frontend Structure
+
+- `src/api/taskManagerApi.js` keeps backend endpoint paths, fetch/JWT handling, and readable auth/project/task API methods in one place
+- `src/context/AuthContext.jsx` stores JWT session state
+- `src/context/WorkspaceContext.jsx` stores project/task/filter dashboard state
+- `src/hooks` exposes `useAuth` and `useWorkspace`
+- `src/components` contains the page UI pieces
+- `src/utils/taskUtils.js` contains payload builders and formatting helpers
+
+## Backend Endpoints Used
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /health`
+- `GET /api/projects`
+- `POST /api/projects`
+- `PUT /api/projects/{id}`
+- `DELETE /api/projects/{id}`
+- `GET /api/tasks`
+- `GET /api/tasks/project/{projectId}`
+- `GET /api/tasks/filter`
+- `POST /api/tasks`
+- `PUT /api/tasks/{id}`
+- `PATCH /api/tasks/{id}/status`
+- `DELETE /api/tasks/{id}`
+
+## Current Limitation
+
+The backend does not expose a users API or return the logged-in user's numeric ID, so the UI accepts `createdById`, `memberIds`, and `assignedToId` as manual numeric inputs.
