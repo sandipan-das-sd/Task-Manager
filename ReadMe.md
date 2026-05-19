@@ -1382,16 +1382,6 @@ SPRING_MAIL_USERNAME=your_email
 SPRING_MAIL_PASSWORD=your_email_app_password
 ```
 
-## Important Security Checklist Before Public GitHub
-
-- Do not commit real database password
-- Do not commit real Gmail app password
-- Do not commit production JWT secret
-- Use `.env` or Render environment variables
-- Keep `.env` files ignored
-- Use strong JWT secret in production
-- Use HTTPS Render/Vercel URLs in deployed setup
-
 ## Current Known Limitations
 
 - No real-time collaboration updates
