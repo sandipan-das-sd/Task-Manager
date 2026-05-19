@@ -18,7 +18,8 @@ public class CorsConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://taskmanager.vercel.app"
+                "https://task-manager-three-ashen-60.vercel.app",
+                "https://www.task-manager-three-ashen-60.vercel.app"
         ));
 
         config.setAllowedMethods(List.of(
