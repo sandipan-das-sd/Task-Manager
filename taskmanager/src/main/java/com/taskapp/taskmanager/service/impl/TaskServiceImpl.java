@@ -5,6 +5,7 @@ import com.taskapp.taskmanager.entity.*;
 import com.taskapp.taskmanager.repositary.ProjectRepository;
 import com.taskapp.taskmanager.repositary.TaskRepository;
 import com.taskapp.taskmanager.repositary.UserRepository;
+import com.taskapp.taskmanager.service.EmailService;
 import com.taskapp.taskmanager.service.TaskService;
 import org.springframework.stereotype.Service;
 
@@ -16,35 +17,37 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     public TaskServiceImpl(TaskRepository taskRepository,
                            ProjectRepository projectRepository,
-                           UserRepository userRepository) {
+                           UserRepository userRepository,
+                           EmailService emailService) {
         this.taskRepository = taskRepository;
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
+        this.emailService = emailService;
+    }
+
+    private void sendTaskEmail(User user, String subject, String message) {
+        if (user == null || user.getEmail() == null) {
+            return;
+        }
+        emailService.sendEmail(user.getEmail(), subject, message);
     }
 
     @Override
     public List<TaskDto> getAllTasks() {
-        return taskRepository.findAll()
-                .stream()
-                .map(this::toDto)
-                .toList();
+        return taskRepository.findAll().stream().map(this::toDto).toList();
     }
 
     @Override
     public List<TaskDto> getTasksByProject(Long projectId) {
-        return taskRepository.findByProjectId(projectId)
-                .stream()
-                .map(this::toDto)
-                .toList();
+        return taskRepository.findByProjectId(projectId).stream().map(this::toDto).toList();
     }
 
     @Override
     public TaskDto createTask(TaskDto taskDto) {
-
-        //check any project is assigned on task
 
         Project project = projectRepository.findById(taskDto.getProjectId())
                 .orElseThrow(() -> new RuntimeException("Project not found"));
@@ -66,7 +69,22 @@ public class TaskServiceImpl implements TaskService {
                 .assignedTo(assignedUser)
                 .build();
 
-        return toDto(taskRepository.save(task));
+        Task savedTask = taskRepository.save(task);
+
+        sendTaskEmail(
+                assignedUser,
+                "New Task Assigned: " + savedTask.getTitle(),
+                "Hello " + assignedUser.getName() + ",\n\n"
+                        + "A new task has been assigned to you.\n\n"
+                        + "Task: " + savedTask.getTitle() + "\n"
+                        + "Description: " + savedTask.getDescription() + "\n"
+                        + "Priority: " + savedTask.getPriority() + "\n"
+                        + "Due Date: " + savedTask.getDueDate() + "\n"
+                        + "Status: " + savedTask.getStatus() + "\n\n"
+                        + "Please check your dashboard."
+        );
+
+        return toDto(savedTask);
     }
 
     @Override
@@ -87,7 +105,19 @@ public class TaskServiceImpl implements TaskService {
             task.setAssignedTo(assignedUser);
         }
 
-        return toDto(taskRepository.save(task));
+        Task savedTask = taskRepository.save(task);
+
+        sendTaskEmail(
+                savedTask.getAssignedTo(),
+                "Task Updated: " + savedTask.getTitle(),
+                "Hello,\n\nYour assigned task has been updated.\n\n"
+                        + "Task: " + savedTask.getTitle() + "\n"
+                        + "Status: " + savedTask.getStatus() + "\n"
+                        + "Priority: " + savedTask.getPriority() + "\n"
+                        + "Due Date: " + savedTask.getDueDate()
+        );
+
+        return toDto(savedTask);
     }
 
     @Override
@@ -98,12 +128,36 @@ public class TaskServiceImpl implements TaskService {
 
         task.setStatus(status);
 
-        return toDto(taskRepository.save(task));
+        Task savedTask = taskRepository.save(task);
+
+        sendTaskEmail(
+                savedTask.getAssignedTo(),
+                "Task Status Changed: " + savedTask.getTitle(),
+                "Hello,\n\nTask status has been changed.\n\n"
+                        + "Task: " + savedTask.getTitle() + "\n"
+                        + "New Status: " + savedTask.getStatus()
+        );
+
+        return toDto(savedTask);
     }
 
     @Override
     public void deleteTask(Long id) {
-        taskRepository.deleteById(id);
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        User assignedUser = task.getAssignedTo();
+        String title = task.getTitle();
+
+        taskRepository.delete(task);
+
+        sendTaskEmail(
+                assignedUser,
+                "Task Deleted: " + title,
+                "Hello,\n\nYour assigned task has been deleted.\n\n"
+                        + "Task: " + title
+        );
     }
 
     @Override
