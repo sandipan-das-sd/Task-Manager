@@ -1401,13 +1401,6 @@ SPRING_MAIL_PASSWORD=your_email_app_password
 - Member users can update task status but cannot edit full task details
 - Task assignment is based on user list from backend
 
-## Summary
+## Project Status
 
-This project is structured as a complete junior developer full-stack assignment:
-
-- Spring Boot backend with JWT auth and role protection
-- PostgreSQL/Supabase database integration
-- React frontend with dashboard and Kanban UI
-- Admin/Member permissions
-- Forgot/reset password flow
-- Deployment-ready Vercel and Render configuration
+The application is ready for review with a working Spring Boot API, React dashboard, JWT authentication, Admin/Member permissions, Supabase PostgreSQL integration, and deployment configuration for Render and Vercel.
