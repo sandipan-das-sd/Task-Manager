@@ -2,7 +2,7 @@ import { PRIORITIES, STATUSES } from '../constants/task'
 import { useWorkspace } from '../hooks/useWorkspace'
 
 export default function FilterBar() {
-  const { projects, filters, setFilters, applyFilters, clearFilters } =
+  const { projects, users, filters, setFilters, applyFilters, clearFilters } =
     useWorkspace()
 
   function updateField(field, value) {
@@ -54,14 +54,18 @@ export default function FilterBar() {
         </select>
       </label>
       <label>
-        Assignee ID
-        <input
-          type="number"
-          min="1"
+        Assignee
+        <select
           value={filters.assigneeId}
           onChange={(event) => updateField('assigneeId', event.target.value)}
-          placeholder="Any"
-        />
+        >
+          <option value="">Any</option>
+          {users.map((user) => (
+            <option key={user.id} value={user.id}>
+              {user.name || user.email}
+            </option>
+          ))}
+        </select>
       </label>
       <div className="filter-actions">
         <button type="button" className="secondary-btn" onClick={() => applyFilters()}>

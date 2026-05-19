@@ -2,6 +2,7 @@ package com.taskapp.taskmanager.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -52,13 +53,23 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        // only ADMIN or MEMBER can access
-                        .requestMatchers("/api/projects/**")
+                        .requestMatchers(HttpMethod.GET, "/api/projects/**")
                         .hasAnyRole("ADMIN", "MEMBER")
+                        .requestMatchers(HttpMethod.POST, "/api/projects/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/projects/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/projects/**").hasRole("ADMIN")
 
-                        // only ADMIN or MEMBER can access
-                        .requestMatchers("/api/tasks/**")
+                        .requestMatchers(HttpMethod.GET, "/api/tasks/**")
                         .hasAnyRole("ADMIN", "MEMBER")
+                        .requestMatchers(HttpMethod.PATCH, "/api/tasks/*/status")
+                        .hasAnyRole("ADMIN", "MEMBER")
+                        .requestMatchers(HttpMethod.POST, "/api/tasks/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/tasks/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/tasks/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/api/users/**")
+                        .hasAnyRole("ADMIN", "MEMBER")
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
 
                         // all other routes need login
                         .anyRequest().authenticated()

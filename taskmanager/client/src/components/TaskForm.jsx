@@ -4,7 +4,7 @@ import { useWorkspace } from '../hooks/useWorkspace'
 import { buildTaskPayload, taskToForm } from '../utils/taskUtils'
 
 export default function TaskForm({ editingTask, setEditingTask }) {
-  const { projects, selectedProjectId, filters, saveTask } = useWorkspace()
+  const { projects, users, selectedProjectId, filters, saveTask } = useWorkspace()
   const fallbackProjectId = selectedProjectId || filters.projectId || projects[0]?.id || ''
   const [form, setForm] = useState(() => taskToForm(editingTask, fallbackProjectId))
   const isEditing = Boolean(editingTask)
@@ -106,14 +106,18 @@ export default function TaskForm({ editingTask, setEditingTask }) {
         </label>
 
         <label>
-          Assignee ID
-          <input
-            type="number"
-            min="1"
+          Assignee
+          <select
             value={form.assignedToId}
             onChange={(event) => updateField('assignedToId', event.target.value)}
-            placeholder="1"
-          />
+          >
+            <option value="">Unassigned</option>
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name || user.email}
+              </option>
+            ))}
+          </select>
         </label>
 
         <label className="description-field">

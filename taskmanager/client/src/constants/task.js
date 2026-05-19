@@ -16,7 +16,7 @@ export const EMPTY_PROJECT_FORM = {
   name: '',
   description: '',
   createdById: '',
-  memberIds: '',
+  memberIds: [],
 }
 
 export const EMPTY_TASK_FORM = {

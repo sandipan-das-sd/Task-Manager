@@ -164,6 +164,17 @@ h3 {
   gap: 16px;
 }
 
+.auth-form-heading {
+  display: grid;
+  gap: 6px;
+}
+
+.auth-form-heading p {
+  color: #667085;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
 .compact-form {
   padding-top: 18px;
   border-top: 1px solid #e5eaf0;
@@ -179,10 +190,120 @@ h3 {
   font-weight: 700;
 }
 
+.field-group {
+  display: grid;
+  gap: 8px;
+}
+
+.field-group > span {
+  color: #536173;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.member-checklist {
+  display: grid;
+  max-height: 190px;
+  gap: 8px;
+  overflow: auto;
+  border: 1px solid #d6dde6;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 8px;
+}
+
+.check-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.check-row:hover {
+  background: #f5f7fa;
+}
+
+.check-row input {
+  width: 18px;
+  min-height: 18px;
+}
+
+.check-row span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.check-row strong,
+.check-row small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.check-row strong {
+  color: #18212f;
+  font-size: 13px;
+}
+
+.check-row small {
+  color: #697586;
+  font-size: 12px;
+}
+
 .form-error {
   color: #b42318;
   font-size: 13px;
   font-weight: 700;
+}
+
+.form-success {
+  border: 1px solid #b8d6ce;
+  border-radius: 8px;
+  background: #ebf7f4;
+  color: #0f5f58;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 46px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 8px;
+  background: transparent;
+  color: #667085;
+  transform: translateY(-50%);
+}
+
+.password-toggle:hover {
+  background: #eef2f6;
+  color: #0f766e;
+}
+
+.password-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 
 .primary-btn,
@@ -190,7 +311,8 @@ h3 {
 .ghost-btn,
 .danger-btn,
 .danger-text-btn,
-.icon-btn {
+.icon-btn,
+.link-btn {
   min-height: 40px;
   border-radius: 8px;
   padding: 0 14px;
@@ -235,6 +357,24 @@ h3 {
 .danger-text-btn {
   background: #fff1f0;
   color: #b42318;
+}
+
+.link-btn {
+  min-height: auto;
+  justify-self: start;
+  background: transparent;
+  color: #0f766e;
+  padding: 0;
+}
+
+.link-btn:hover:not(:disabled) {
+  color: #115e59;
+  text-decoration: underline;
+  transform: none;
+}
+
+.center-link {
+  justify-self: center;
 }
 
 .icon-btn {

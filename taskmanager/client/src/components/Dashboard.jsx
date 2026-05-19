@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useAuth } from '../hooks/useAuth'
 import { useWorkspace } from '../hooks/useWorkspace'
 import DueSoonList from './DueSoonList'
 import FilterBar from './FilterBar'
@@ -10,6 +11,7 @@ import TaskForm from './TaskForm'
 import Topbar from './Topbar'
 
 export default function Dashboard() {
+  const { isAdmin } = useAuth()
   const { deleteTask, selectedProjectId, filters, projects } = useWorkspace()
   const [editingProject, setEditingProject] = useState(null)
   const [editingTask, setEditingTask] = useState(null)
@@ -39,11 +41,13 @@ export default function Dashboard() {
         <main className="main-workspace">
           <StatGrid />
           <FilterBar />
-          <TaskForm
-            key={taskFormKey}
-            editingTask={editingTask}
-            setEditingTask={setEditingTask}
-          />
+          {isAdmin && (
+            <TaskForm
+              key={taskFormKey}
+              editingTask={editingTask}
+              setEditingTask={setEditingTask}
+            />
+          )}
 
           <div className="content-grid">
             <KanbanBoard

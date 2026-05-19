@@ -20,6 +20,7 @@ function hasTaskFilters(filters) {
 
 export function WorkspaceProvider({ children }) {
   const { session } = useAuth()
+  const [users, setUsers] = useState([])
   const [projects, setProjects] = useState([])
   const [tasks, setTasks] = useState([])
   const [filters, setFilters] = useState(EMPTY_FILTERS)
@@ -73,10 +74,12 @@ export function WorkspaceProvider({ children }) {
   }, [])
 
   const refreshWorkspace = useCallback(async () => {
-    const [projectData, taskData] = await Promise.all([
+    const [userData, projectData, taskData] = await Promise.all([
+      api.users.list(),
       api.projects.list(),
       api.tasks.list(),
     ])
+    setUsers(userData)
     setProjects(projectData)
     setTasks(taskData)
   }, [api])
@@ -221,6 +224,7 @@ export function WorkspaceProvider({ children }) {
   const value = useMemo(
     () => ({
       projects,
+      users,
       tasks,
       visibleTasks,
       filters,
@@ -242,6 +246,7 @@ export function WorkspaceProvider({ children }) {
     }),
     [
       projects,
+      users,
       tasks,
       visibleTasks,
       filters,

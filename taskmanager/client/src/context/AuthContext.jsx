@@ -60,6 +60,8 @@ export function AuthProvider({ children }) {
     () => ({
       session,
       isAuthenticated: Boolean(session?.token),
+      isAdmin: session?.role === 'ADMIN',
+      isMember: session?.role === 'MEMBER',
       authLoading,
       authError,
       login,

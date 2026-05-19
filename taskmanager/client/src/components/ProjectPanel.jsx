@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { EMPTY_PROJECT_FORM } from '../constants/task'
+import { useAuth } from '../hooks/useAuth'
 import { useWorkspace } from '../hooks/useWorkspace'
 import { buildProjectPayload, projectToForm } from '../utils/taskUtils'
 
 export default function ProjectPanel({ editingProject, setEditingProject }) {
+  const { isAdmin } = useAuth()
   const {
     projects,
+    users,
     selectedProjectId,
     selectProject,
     saveProject,
@@ -16,6 +19,18 @@ export default function ProjectPanel({ editingProject, setEditingProject }) {
 
   function updateField(field, value) {
     setForm((current) => ({ ...current, [field]: value }))
+  }
+
+  function toggleMember(userId) {
+    const memberId = String(userId)
+
+    setForm((current) => {
+      const memberIds = current.memberIds.includes(memberId)
+        ? current.memberIds.filter((id) => id !== memberId)
+        : [...current.memberIds, memberId]
+
+      return { ...current, memberIds }
+    })
   }
 
   function startNewProject() {
@@ -62,9 +77,11 @@ export default function ProjectPanel({ editingProject, setEditingProject }) {
           <p className="eyebrow">Workspace</p>
           <h2>Projects</h2>
         </div>
-        <button type="button" className="ghost-btn" onClick={startNewProject}>
-          New
-        </button>
+        {isAdmin && (
+          <button type="button" className="ghost-btn" onClick={startNewProject}>
+            New
+          </button>
+        )}
       </div>
 
       <div className="project-list">
@@ -77,34 +94,51 @@ export default function ProjectPanel({ editingProject, setEditingProject }) {
           <small>{projects.length}</small>
         </button>
 
-        {projects.map((project) => (
-          <div
-            key={project.id}
-            className={
-              String(selectedProjectId) === String(project.id)
-                ? 'project-item active'
-                : 'project-item'
-            }
-          >
+        {projects.map((project) =>
+          isAdmin ? (
+            <div
+              key={project.id}
+              className={
+                String(selectedProjectId) === String(project.id)
+                  ? 'project-item active'
+                  : 'project-item'
+              }
+            >
+              <button
+                type="button"
+                className="project-row"
+                onClick={() => selectProject(String(project.id))}
+              >
+                <span>{project.name}</span>
+                <small>#{project.id}</small>
+              </button>
+              <button
+                type="button"
+                className="mini-btn"
+                onClick={() => startEditProject(project)}
+              >
+                Edit
+              </button>
+            </div>
+          ) : (
             <button
+              key={project.id}
               type="button"
-              className="project-row"
+              className={
+                String(selectedProjectId) === String(project.id)
+                  ? 'project-row active'
+                  : 'project-row'
+              }
               onClick={() => selectProject(String(project.id))}
             >
               <span>{project.name}</span>
               <small>#{project.id}</small>
             </button>
-            <button
-              type="button"
-              className="mini-btn"
-              onClick={() => startEditProject(project)}
-            >
-              Edit
-            </button>
-          </div>
-        ))}
+          ),
+        )}
       </div>
 
+      {isAdmin && (
       <form className="stack-form compact-form" onSubmit={handleSubmit}>
         <h3>{isEditing ? 'Update project' : 'Create project'}</h3>
 
@@ -128,25 +162,41 @@ export default function ProjectPanel({ editingProject, setEditingProject }) {
           />
         </label>
 
-        <div className="two-column">
-          <label>
-            Creator ID
-            <input
-              type="number"
-              min="1"
-              value={form.createdById}
-              onChange={(event) => updateField('createdById', event.target.value)}
-              placeholder="1"
-            />
-          </label>
-          <label>
-            Member IDs
-            <input
-              value={form.memberIds}
-              onChange={(event) => updateField('memberIds', event.target.value)}
-              placeholder="1, 2, 3"
-            />
-          </label>
+        <label>
+          Creator
+          <select
+            value={form.createdById}
+            onChange={(event) => updateField('createdById', event.target.value)}
+          >
+            <option value="">Select creator</option>
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name || user.email}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <div className="field-group">
+          <span>Members</span>
+          <div className="member-checklist">
+            {users.map((user) => (
+              <label className="check-row" key={user.id}>
+                <input
+                  type="checkbox"
+                  checked={form.memberIds.includes(String(user.id))}
+                  onChange={() => toggleMember(user.id)}
+                />
+                <span>
+                  <strong>{user.name || user.email}</strong>
+                  <small>{user.email}</small>
+                </span>
+              </label>
+            ))}
+            {!users.length && (
+              <div className="empty-column">No members found</div>
+            )}
+          </div>
         </div>
 
         <div className="button-row">
@@ -164,6 +214,7 @@ export default function ProjectPanel({ editingProject, setEditingProject }) {
           )}
         </div>
       </form>
+      )}
     </aside>
   )
 }

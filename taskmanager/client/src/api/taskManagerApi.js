@@ -7,6 +7,9 @@ const endpoints = {
   health: '/health',
   register: '/api/auth/register',
   login: '/api/auth/login',
+  forgotPassword: '/api/auth/forgot-password',
+  resetPassword: '/api/auth/reset-password',
+  users: '/api/users',
   projects: '/api/projects',
   projectById: (id) => `/api/projects/${id}`,
   tasks: '/api/tasks',
@@ -39,10 +42,8 @@ async function request(path, options = {}, token = null) {
     body: options.body ? JSON.stringify(options.body) : undefined,
   })
 
-  const contentType = response.headers.get('content-type') || ''
-  const body = contentType.includes('application/json')
-    ? await response.json()
-    : await response.text()
+  const responseText = await response.text()
+  const body = parseResponseBody(responseText)
 
   if (!response.ok) {
     const message =
@@ -53,6 +54,18 @@ async function request(path, options = {}, token = null) {
   }
 
   return body
+}
+
+function parseResponseBody(responseText) {
+  if (!responseText) {
+    return null
+  }
+
+  try {
+    return JSON.parse(responseText)
+  } catch {
+    return responseText
+  }
 }
 
 export const authApi = {
@@ -66,6 +79,16 @@ export const authApi = {
       method: 'POST',
       body: payload,
     }),
+  forgotPassword: (payload) =>
+    request(endpoints.forgotPassword, {
+      method: 'POST',
+      body: payload,
+    }),
+  resetPassword: (payload) =>
+    request(endpoints.resetPassword, {
+      method: 'POST',
+      body: payload,
+    }),
 }
 
 export function createTaskManagerApi(token) {
@@ -73,6 +96,9 @@ export function createTaskManagerApi(token) {
 
   return {
     health: () => request(endpoints.health),
+    users: {
+      list: () => withAuth(endpoints.users),
+    },
     projects: {
       list: () => withAuth(endpoints.projects),
       create: (payload) =>

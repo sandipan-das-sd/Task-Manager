@@ -2,11 +2,14 @@ import { STATUSES } from '../constants/task'
 import {
   getPriorityLabel,
   getProjectName,
+  getUserLabel,
 } from '../utils/taskUtils'
 
 export default function TaskCard({
   task,
   projects,
+  users,
+  canManageTasks,
   onEditTask,
   onDeleteTask,
   onMoveTask,
@@ -35,7 +38,7 @@ export default function TaskCard({
 
       <div className="task-meta">
         <span>{projectName || `Project #${task.projectId}`}</span>
-        <span>{task.assignedToId ? `User #${task.assignedToId}` : 'Unassigned'}</span>
+        <span>{getUserLabel(users, task.assignedToId)}</span>
       </div>
 
       <div className="task-actions">
@@ -48,16 +51,20 @@ export default function TaskCard({
         >
           &lt;
         </button>
-        <button type="button" className="ghost-btn" onClick={() => onEditTask(task)}>
-          Edit
-        </button>
-        <button
-          type="button"
-          className="danger-text-btn"
-          onClick={() => onDeleteTask(task.id)}
-        >
-          Delete
-        </button>
+        {canManageTasks && (
+          <button type="button" className="ghost-btn" onClick={() => onEditTask(task)}>
+            Edit
+          </button>
+        )}
+        {canManageTasks && (
+          <button
+            type="button"
+            className="danger-text-btn"
+            onClick={() => onDeleteTask(task.id)}
+          >
+            Delete
+          </button>
+        )}
         <button
           type="button"
           className="icon-btn"

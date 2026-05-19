@@ -6,6 +6,8 @@ import com.taskapp.taskmanager.service.ForgotPasswordService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin("*")
@@ -18,13 +20,13 @@ public class ForgotPasswordController {
     }
 
     @PostMapping("/forgot-password")
-    public String forgotPassword(@Valid @RequestBody ForgetPasswordRequest request) {
-        return forgotPasswordService.forgotPassword(request);
+    public Map<String, String> forgotPassword(@Valid @RequestBody ForgetPasswordRequest request) {
+        return Map.of("message", forgotPasswordService.forgotPassword(request));
     }
 
     @PostMapping("/reset-password")
-    public String resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        return forgotPasswordService.resetPassword(request);
+    public Map<String, String> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        return Map.of("message", forgotPasswordService.resetPassword(request));
     }
     
 }

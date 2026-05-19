@@ -11,6 +11,10 @@ export function parseId(value) {
 }
 
 export function parseMemberIds(value) {
+  if (Array.isArray(value)) {
+    return value.map(Number).filter((item) => Number.isFinite(item))
+  }
+
   return String(value || '')
     .split(',')
     .map((item) => item.trim())
@@ -20,12 +24,22 @@ export function parseMemberIds(value) {
 }
 
 export function formatMemberIds(memberIds) {
-  return Array.isArray(memberIds) ? memberIds.join(', ') : ''
+  return Array.isArray(memberIds) ? memberIds.map(String) : []
 }
 
 export function getProjectName(projects, projectId) {
   return projects.find((project) => String(project.id) === String(projectId))
     ?.name
+}
+
+export function getUserLabel(users, userId) {
+  const user = users.find((item) => String(item.id) === String(userId))
+
+  if (!user) {
+    return userId ? `User #${userId}` : 'Unassigned'
+  }
+
+  return user.name || user.email
 }
 
 export function getStatusLabel(status) {

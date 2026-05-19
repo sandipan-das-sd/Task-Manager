@@ -20,11 +20,15 @@ For Vercel, add the same `VITE_API_BASE_URL` environment variable with your Rend
 ## Implemented Screens
 
 - Login and registration with JWT session storage
+- Password visibility toggle on auth and reset forms
+- Forgot password and reset password flows
 - Dashboard stats for projects, tasks, progress, high priority, and overdue work
-- Project create, update, delete, and member ID assignment
-- Task create, update, delete, status movement, priority, due date, assignee ID
+- Admin-only project and task create, update, delete controls
+- Member read-only dashboard with task status updates only
+- Project create, update, delete, and member assignment with user selection
+- Task create, update, delete, status movement, priority, due date, and assignee selection
 - Kanban board with native drag-and-drop status updates
-- Task filters for project, status, priority, and assignee ID
+- Task filters for project, status, priority, and assignee
 
 ## Frontend Structure
 
@@ -39,7 +43,10 @@ For Vercel, add the same `VITE_API_BASE_URL` environment variable with your Rend
 
 - `POST /api/auth/register`
 - `POST /api/auth/login`
+- `POST /api/auth/forgot-password`
+- `POST /api/auth/reset-password`
 - `GET /health`
+- `GET /api/users`
 - `GET /api/projects`
 - `POST /api/projects`
 - `PUT /api/projects/{id}`
@@ -51,7 +58,3 @@ For Vercel, add the same `VITE_API_BASE_URL` environment variable with your Rend
 - `PUT /api/tasks/{id}`
 - `PATCH /api/tasks/{id}/status`
 - `DELETE /api/tasks/{id}`
-
-## Current Limitation
-
-The backend does not expose a users API or return the logged-in user's numeric ID, so the UI accepts `createdById`, `memberIds`, and `assignedToId` as manual numeric inputs.

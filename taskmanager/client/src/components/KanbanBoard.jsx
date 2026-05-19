@@ -1,9 +1,11 @@
 import { STATUSES } from '../constants/task'
+import { useAuth } from '../hooks/useAuth'
 import { useWorkspace } from '../hooks/useWorkspace'
 import TaskCard from './TaskCard'
 
 export default function KanbanBoard({ onEditTask, onDeleteTask }) {
-  const { projects, visibleTasks, moveTask } = useWorkspace()
+  const { isAdmin } = useAuth()
+  const { projects, users, visibleTasks, moveTask } = useWorkspace()
 
   async function handleDropTask(event, status) {
     const taskId = event.dataTransfer.getData('text/plain')
@@ -36,6 +38,8 @@ export default function KanbanBoard({ onEditTask, onDeleteTask }) {
                   key={task.id}
                   task={task}
                   projects={projects}
+                  users={users}
+                  canManageTasks={isAdmin}
                   onEditTask={onEditTask}
                   onDeleteTask={onDeleteTask}
                   onMoveTask={moveTask}
