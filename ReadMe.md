@@ -22,11 +22,125 @@ From this repository root, backend and frontend paths look like this:
 
 ```text
 taskmanager/
-  src/        Backend source code
-  client/     React frontend source code
-  pom.xml     Backend Maven configuration
-  Dockerfile  Backend Docker deployment file
+  src/          Backend source code
+  client/       React frontend source code
+  api-testing/  Saved API testing examples
+  er-diagram/   Database schema visualizer image
+  pom.xml       Backend Maven configuration
+  Dockerfile    Backend Docker deployment file
 ```
+
+## Overall Folder Structure
+
+This is the high-level structure of the project before the detailed backend and frontend sections.
+
+```text
+.
+  ReadMe.md
+
+  taskmanager/
+    pom.xml
+    Dockerfile
+    mvnw
+    mvnw.cmd
+
+    src/
+      main/
+        java/com/taskapp/taskmanager/
+          config/
+          controller/
+          dto/
+          entity/
+          exception/
+          repositary/
+          security/
+          service/
+        resources/
+          application.properties
+      test/
+        java/com/taskapp/taskmanager/
+
+    client/
+      index.html
+      package.json
+      vite.config.js
+      vercel.json
+      public/
+      src/
+        api/
+        assets/
+        components/
+        constants/
+        context/
+        hooks/
+        utils/
+
+    api-testing/
+      health.json
+      auth/
+        forgetpassword.html
+        login.json
+        register.json
+        restpassword.html
+      project/
+        create.json
+        get.json
+        update.json
+      task/
+        all_task_project.json
+        create.json
+        filter.json
+        status_update.json
+        update.json
+
+    er-diagram/
+      keyprimarykey.png
+```
+
+## Supporting Folders
+
+### `api-testing/`
+
+Path:
+
+```text
+taskmanager/api-testing/
+```
+
+This folder is used for API testing reference files. It stores saved JSON and HTML examples for the backend endpoints, grouped by feature:
+
+- `health.json` for the backend health check response
+- `auth/` for register, login, forgot-password, and reset-password examples
+- `project/` for project create, get, and update examples
+- `task/` for task create, update, filter, project-task, and status-update examples
+
+Use these files while testing APIs manually in tools like Postman, Thunder Client, or Swagger UI. Start the backend first, call the matching endpoint from the API list below, then compare the response shape with the saved example file.
+
+For protected project and task APIs, first call:
+
+```text
+POST /api/auth/login
+```
+
+Then send the returned JWT token in the request header:
+
+```text
+Authorization: Bearer <token>
+```
+
+The saved token values are examples only. Generate a fresh login token when testing locally or in production.
+
+### `er-diagram/`
+
+Path:
+
+```text
+taskmanager/er-diagram/keyprimarykey.png
+```
+
+This folder stores the database schema visualizer image. The ER diagram is used to understand the main database tables, primary keys, and relationships between entities such as users, projects, tasks, and password reset tokens.
+
+![Database ER diagram](taskmanager/er-diagram/keyprimarykey.png)
 
 ## Main Features
 
@@ -43,6 +157,8 @@ taskmanager/
 - Forgot password and reset password flow
 - Password visibility toggle on login/register/reset forms
 - Safe user list endpoint for member selection without exposing passwords
+- Saved API testing examples in `api-testing/`
+- Database schema visualizer image in `er-diagram/`
 - Supabase pooler fix for PostgreSQL prepared statement errors
 
 ## Role Permissions
