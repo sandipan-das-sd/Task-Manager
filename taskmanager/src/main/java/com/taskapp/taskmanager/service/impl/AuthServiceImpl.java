@@ -8,80 +8,60 @@ import com.taskapp.taskmanager.entity.User;
 import com.taskapp.taskmanager.repositary.UserRepository;
 import com.taskapp.taskmanager.security.JwtUtil;
 import com.taskapp.taskmanager.service.AuthService;
+import com.taskapp.taskmanager.service.EmailService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
-
     private final UserRepository userRepository;
 
-    // password hashing
     private final PasswordEncoder passwordEncoder;
-
 
     private final JwtUtil jwtUtil;
 
-
+    private final EmailService emailService;
 
     public AuthServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
-                           JwtUtil jwtUtil) {
+                           JwtUtil jwtUtil,
+                           EmailService emailService) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.emailService = emailService;
     }
-
-
-
-    // REGISTER USER
 
     @Override
     public AuthResponse register(RegisterRequest request) {
 
-        // check email already exists or not
         if (userRepository.existsByEmail(request.getEmail())) {
-
             throw new RuntimeException("Email already exists");
         }
 
-        // if role is null then default MEMBER
         Role role = request.getRole() == null
                 ? Role.MEMBER
                 : request.getRole();
 
-
-        // create user object
         User user = User.builder()
-
                 .name(request.getName())
-
                 .email(request.getEmail())
-
-                // hash password before saving
-                .password(
-                        passwordEncoder.encode(request.getPassword())
-                )
-
+                .password(passwordEncoder.encode(request.getPassword()))
                 .role(role)
-
                 .build();
 
-
-        // save user in database
         userRepository.save(user);
 
+        // send welcome email
+        sendWelcomeEmail(user);
 
-        // generate JWT token
         String token = jwtUtil.generateToken(
                 user.getEmail(),
                 user.getRole().name()
         );
 
-
-        // return response
         return new AuthResponse(
                 token,
                 user.getEmail(),
@@ -89,22 +69,15 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
-
-
-    // LOGIN USER
-
     @Override
     public AuthResponse login(LoginRequest request) {
 
-        // find user by email
         User user = userRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(() ->
                         new RuntimeException("User not found")
                 );
 
-
-        // check password correct or not
         if (!passwordEncoder.matches(
                 request.getPassword(),
                 user.getPassword()
@@ -113,19 +86,52 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid password");
         }
 
+        // login notification email
+        sendLoginEmail(user);
 
-        // generate token
         String token = jwtUtil.generateToken(
                 user.getEmail(),
                 user.getRole().name()
         );
 
-
-        // return auth response
         return new AuthResponse(
                 token,
                 user.getEmail(),
                 user.getRole().name()
+        );
+    }
+
+    // welcome email
+    private void sendWelcomeEmail(User user) {
+
+        String subject = "Welcome to Task Manager";
+
+        String message = "Hello " + user.getName() + ",\n\n"
+                + "Your account has been created successfully.\n\n"
+                + "Email: " + user.getEmail() + "\n"
+                + "Role: " + user.getRole() + "\n\n"
+                + "Welcome to Task Manager App.";
+
+        emailService.sendEmail(
+                user.getEmail(),
+                subject,
+                message
+        );
+    }
+
+    // login email
+    private void sendLoginEmail(User user) {
+
+        String subject = "Login Alert";
+
+        String message = "Hello " + user.getName() + ",\n\n"
+                + "Your account was logged in successfully.\n\n"
+                + "If this was not you, please reset your password immediately.";
+
+        emailService.sendEmail(
+                user.getEmail(),
+                subject,
+                message
         );
     }
 }
