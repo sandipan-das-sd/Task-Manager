@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "name": "Task Management App",
+  "description": "Spring Boot Project",
+  "createdById": 1,
+  "createdByName": "Sandipan Das",
+  "memberIds": [
+    1,
+    2
+  ]
+}

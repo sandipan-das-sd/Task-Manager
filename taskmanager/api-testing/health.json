@@ -1,0 +1,12 @@
+{
+  "databaseUser": "postgres",
+  "application": "Task Manager Backend",
+  "databaseStatus": "Connected",
+  "driverName": "PostgreSQL JDBC Driver",
+  "time": "2026-05-19T17:27:42.2384929",
+  "serverPort": "8081",
+  "databaseProduct": "PostgreSQL",
+  "databaseVersion": "17.6",
+  "databaseUrl": "jdbc:postgresql://db.mzqusnpldjrnlllcoegb.supabase.co:5432/postgres?sslmode=require",
+  "status": "Running"
+}
